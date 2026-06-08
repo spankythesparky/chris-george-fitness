@@ -600,7 +600,7 @@ const TESTIMONIALS = [
 ];
 
 const STATS = [
-  { b: "28+", s: "Years Training" },
+  { b: "20+", s: "Years Training" },
   { b: "400+", s: "Clients Trained" },
   { b: "50K+", s: "Sessions Logged" },
 ];
