@@ -1298,12 +1298,47 @@ function Footer({ go }) {
 }
 
 /* ---------------- ROOT ---------------- */
+const PATHS = {
+  home: "/",
+  services: "/services",
+  apparel: "/apparel",
+  supplements: "/supplements",
+  contact: "/contact",
+};
+const TITLES = {
+  home: "Chris George Fitness — Let's Work",
+  services: "Services & Pricing — Chris George Fitness",
+  apparel: "Apparel — Chris George Fitness",
+  supplements: "Supplements — Chris George Fitness",
+  contact: "Contact — Chris George Fitness",
+};
+const pageFromPath = (path) => {
+  const p = path !== "/" ? path.replace(/\/+$/, "") : "/";
+  return Object.keys(PATHS).find((k) => PATHS[k] === p) || "home";
+};
+
 export default function App() {
-  const [page, setPage] = useState("home");
+  const [page, setPage] = useState(() =>
+    typeof window !== "undefined" ? pageFromPath(window.location.pathname) : "home"
+  );
   const glowRef = useRef(null);
   useReveal();
 
+  useEffect(() => {
+    document.title = TITLES[page] || TITLES.home;
+  }, [page]);
+
+  useEffect(() => {
+    const onPop = () => setPage(pageFromPath(window.location.pathname));
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
   const go = useCallback((p) => {
+    const path = PATHS[p] || "/";
+    if (window.location.pathname !== path) {
+      window.history.pushState({}, "", path);
+    }
     setPage(p);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
