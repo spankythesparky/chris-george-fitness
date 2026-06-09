@@ -38,7 +38,7 @@ const LOGO_FULL = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAw
 // === Formspree ===
 // Replace YOUR_FORM_ID with your form's ID from formspree.io
 // e.g. https://formspree.io/f/abcwxyz  ->  use "abcwxyz"
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/YOUR_FORM_ID";
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/xdavzknk";
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@500;600;700;800;900&family=Manrope:wght@300;400;500;600;700&display=swap');
