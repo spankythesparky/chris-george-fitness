@@ -39,6 +39,12 @@ const LOGO_FULL = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAw
 // Replace YOUR_FORM_ID with your form's ID from formspree.io
 // e.g. https://formspree.io/f/abcwxyz  ->  use "abcwxyz"
 const FORMSPREE_ENDPOINT = "https://formspree.io/f/xdavzknk";
+// Separate Formspree form for the post-purchase client intake questionnaire.
+// Create a 2nd form at formspree.io ("Client Nutrition Intake") and paste its hash here.
+const FORMSPREE_INTAKE_ENDPOINT = "https://formspree.io/f/REPLACE_ME";
+// Stripe Payment Link — clients land on /intake automatically after paying
+// (set the Payment Link's "After payment" redirect to /intake in the Stripe dashboard).
+const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/aFa00i3XK4u7eO11GP6EU00";
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@500;600;700;800;900&family=Manrope:wght@300;400;500;600;700&display=swap');
@@ -1297,6 +1303,275 @@ function Footer({ go }) {
   );
 }
 
+/* ---------------- CLIENT INTAKE QUESTIONNAIRE ---------------- */
+const INTAKE_SECTIONS = [
+  {
+    id: "basics",
+    num: "01",
+    title: "Basic Info & Physical Metrics",
+    fields: [
+      { name: "full_name", label: "Full Name", type: "text", required: true },
+      { name: "email", label: "Email Address", type: "email", required: true },
+      { name: "phone", label: "Phone Number", type: "tel" },
+      { name: "age", label: "Age", type: "number" },
+      { name: "gender", label: "Gender", type: "radio", options: ["Male", "Female", "Other"] },
+      { name: "weight", label: "Current Weight (lbs)", type: "number" },
+      { name: "height", label: "Height", type: "text", placeholder: "e.g. 5'10\"" },
+      { name: "body_fat", label: "Estimated Body Fat % (if known)", type: "text", placeholder: "Optional" },
+      {
+        name: "primary_goal",
+        label: "What is your primary goal?",
+        type: "radio",
+        options: [
+          "Fat Loss / Cutting",
+          "Muscle Growth / Bulking",
+          "Body Recomposition (lose fat + gain muscle)",
+          "Athletic Performance / Endurance",
+          "General Health & Vitality",
+        ],
+      },
+    ],
+  },
+  {
+    id: "medical",
+    num: "02",
+    title: "Medical, Health & Lifestyle Screening",
+    fields: [
+      { name: "medical_conditions", label: "Diagnosed medical conditions? (Thyroid, PCOS, Diabetes, IBS, etc.)", type: "textarea", placeholder: "List any, or write 'None'" },
+      { name: "medications", label: "Current prescription medications or supplements?", type: "textarea", placeholder: "List any, or write 'None'" },
+      { name: "allergies", label: "Food allergies, intolerances, or sensitivities? (Gluten, Dairy, Soy, Nuts...)", type: "textarea", placeholder: "List any, or write 'None'" },
+      {
+        name: "digestion",
+        label: "How is your typical digestion?",
+        type: "radio",
+        options: ["Great / No issues", "Frequent bloating, gas, or discomfort", "Irregular bowel movements"],
+      },
+      { name: "sleep", label: "Average hours of sleep per night", type: "number" },
+      { name: "stress", label: "Average daily stress level", type: "range", min: 1, max: 10 },
+      {
+        name: "activity_level",
+        label: "Occupation / daily activity level (outside workouts)",
+        type: "radio",
+        options: [
+          "Sedentary (desk job, minimal walking)",
+          "Lightly Active (on your feet a bit)",
+          "Moderately Active (constantly moving, physical labor)",
+          "Highly Active (heavy construction, pro athlete)",
+        ],
+      },
+    ],
+  },
+  {
+    id: "nutrition",
+    num: "03",
+    title: "Nutrition & Dietary Habits",
+    fields: [
+      { name: "disliked_foods", label: "Any foods you absolutely dislike or refuse to eat?", type: "textarea" },
+      { name: "daily_foods", label: "Specific foods you prefer to include every single day?", type: "textarea" },
+      { name: "meal_frequency", label: "How many meals do you prefer per day?", type: "text", placeholder: "e.g. 3 large, 5 smaller, fasting window" },
+      {
+        name: "tracking_experience",
+        label: "Have you tracked macros or calories before?",
+        type: "radio",
+        options: ["Yes, comfortably", "A little, but I find it difficult", "No, never"],
+      },
+      { name: "current_macros", label: "If tracking now, approximate daily calories / macros?", type: "text", placeholder: "Optional" },
+      { name: "diet_history", label: "History of dietary protocols? (Keto, Vegetarian, High Protein...)", type: "textarea" },
+      { name: "free_meals", label: "How often do you eat out / have untracked meals per week?", type: "text", placeholder: "e.g. 2-3 times" },
+    ],
+  },
+  {
+    id: "training",
+    num: "04",
+    title: "Training & Exercise Protocol",
+    fields: [
+      { name: "training_split", label: "What does your current weekly training split look like?", type: "textarea", placeholder: "e.g. 4 days resistance, 2 days cardio" },
+      { name: "training_style", label: "Briefly describe the intensity & style of your workouts", type: "textarea", placeholder: "e.g. high-intensity hypertrophy, heavy lifting" },
+      { name: "cardio_minutes", label: "Minutes of deliberate cardio per week", type: "number" },
+      { name: "training_time", label: "What time of day do you typically train?", type: "text", placeholder: "Helps with nutrient timing" },
+    ],
+  },
+  {
+    id: "mindset",
+    num: "05",
+    title: "Commitment & Mindset",
+    fields: [
+      { name: "readiness", label: "How ready are you to commit to a structured nutrition plan right now?", type: "range", min: 1, max: 10 },
+      { name: "biggest_obstacle", label: "Biggest obstacle in the past when trying to stick to a diet?", type: "textarea" },
+      {
+        name: "accountability_style",
+        label: "How do you best respond to coaching accountability?",
+        type: "radio",
+        options: ["Hard data and direct, candid feedback", "Gentle encouragement and habit-building", "A mix of both"],
+      },
+    ],
+  },
+];
+
+const INTAKE_CSS = `
+.cgi-wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+.cgi-field{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+.cgi-label{font-family:'Manrope';font-size:14.5px;font-weight:500;color:#d8d4cd;line-height:1.45;}
+.cgi-req{color:var(--red);}
+.cgi-input,.cgi-textarea{
+  background:var(--surface2);border:1px solid var(--line);border-radius:10px;
+  padding:13px 15px;color:var(--text);font-size:15px;font-family:'Manrope';
+  transition:border-color .15s;width:100%;
+}
+.cgi-textarea{resize:vertical;min-height:80px;}
+.cgi-input:focus,.cgi-textarea:focus{border-color:var(--red);outline:none;}
+.cgi-input::placeholder,.cgi-textarea::placeholder{color:#5a5552;}
+.cgi-opts{display:flex;flex-direction:column;gap:9px;}
+.cgi-opt{
+  display:flex;align-items:center;gap:12px;text-align:left;padding:13px 16px;
+  border-radius:10px;border:1px solid var(--line);background:var(--surface2);
+  font-size:14.5px;font-family:'Manrope';color:var(--muted);cursor:pointer;transition:all .15s;
+}
+.cgi-opt:hover{border-color:rgba(225,23,34,0.45);}
+.cgi-opt.on{border-color:var(--red);background:var(--red-soft);color:var(--text);}
+.cgi-dot{width:16px;height:16px;border-radius:50%;border:2px solid #3a3635;flex-shrink:0;}
+.cgi-opt.on .cgi-dot{border-color:var(--red);background:var(--red);}
+.cgi-range-wrap{display:flex;align-items:center;gap:18px;padding-top:6px;}
+.cgi-range{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:999px;background:var(--line);outline:none;}
+.cgi-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:var(--red);cursor:pointer;box-shadow:0 0 0 4px var(--red-soft);}
+.cgi-range::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--red);cursor:pointer;border:none;box-shadow:0 0 0 4px var(--red-soft);}
+.cgi-range-val{font-family:'Anton';font-size:26px;color:var(--red);min-width:34px;text-align:center;}
+.cgi-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:28px 24px;margin-bottom:22px;}
+.cgi-head{display:flex;align-items:center;gap:12px;margin-bottom:26px;padding-bottom:18px;border-bottom:1px solid var(--line);}
+.cgi-num{font-family:'Anton';font-size:18px;color:#3a3635;}
+.cgi-title{font-family:'Archivo';font-weight:800;font-size:17px;text-transform:uppercase;letter-spacing:0.6px;margin:0;color:var(--text);}
+.cgi-submit{width:100%;margin-top:12px;padding:18px 24px;background:var(--red);color:#fff;border:none;border-radius:12px;font-family:'Archivo';font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;transition:.2s;}
+.cgi-submit:hover{box-shadow:0 12px 30px rgba(225,23,34,0.3);transform:translateY(-2px);}
+.cgi-submit:disabled{opacity:.7;cursor:default;transform:none;box-shadow:none;}
+.cgi-foot{color:#5a5552;font-size:12.5px;text-align:center;margin-top:18px;}
+.cgi-err{background:rgba(225,23,34,0.1);border:1px solid rgba(225,23,34,0.4);color:#ff8a8a;padding:14px 18px;border-radius:12px;margin-bottom:28px;font-size:14px;}
+`;
+
+function IntakeField({ field, value, onChange }) {
+  const { name, label, type, required, placeholder, options, min, max } = field;
+  return (
+    <div className="cgi-field">
+      <label className="cgi-label">
+        {label}
+        {required && <span className="cgi-req"> *</span>}
+      </label>
+      {type === "textarea" && (
+        <textarea className="cgi-textarea" rows={3} value={value || ""} placeholder={placeholder || ""} onChange={(e) => onChange(name, e.target.value)} />
+      )}
+      {(type === "text" || type === "email" || type === "tel" || type === "number") && (
+        <input className="cgi-input" type={type} value={value || ""} placeholder={placeholder || ""} onChange={(e) => onChange(name, e.target.value)} />
+      )}
+      {type === "radio" && (
+        <div className="cgi-opts">
+          {options.map((opt) => (
+            <button key={opt} type="button" className={`cgi-opt ${value === opt ? "on" : ""}`} onClick={() => onChange(name, opt)}>
+              <span className="cgi-dot" />
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
+      {type === "range" && (
+        <div className="cgi-range-wrap">
+          <input className="cgi-range" type="range" min={min} max={max} value={value ?? Math.round((min + max) / 2)} onChange={(e) => onChange(name, Number(e.target.value))} />
+          <div className="cgi-range-val">{value ?? Math.round((min + max) / 2)}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Intake() {
+  const [data, setData] = useState({ stress: 5, readiness: 5 });
+  const [status, setStatus] = useState("idle"); // idle | sending | done | error
+  const [errMsg, setErrMsg] = useState("");
+  const set = (name, value) => setData((d) => ({ ...d, [name]: value }));
+
+  const submit = async () => {
+    if (!data.full_name || !data.email) {
+      setErrMsg("Please add your name and email so Chris can reach you.");
+      setStatus("error");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    setStatus("sending");
+    setErrMsg("");
+    try {
+      const res = await fetch(FORMSPREE_INTAKE_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ ...data, _subject: `New Client Intake — ${data.full_name}` }),
+      });
+      if (res.ok) {
+        setStatus("done");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        const body = await res.json().catch(() => ({}));
+        setErrMsg(body?.errors?.[0]?.message || "Something went wrong sending the form. Please try again.");
+        setStatus("error");
+      }
+    } catch (e) {
+      setErrMsg("Couldn't reach the server. Check your connection and try again.");
+      setStatus("error");
+    }
+  };
+
+  return (
+    <>
+      <style>{INTAKE_CSS}</style>
+      {status === "done" ? (
+        <section className="cg-section" style={{ paddingTop: 120, paddingBottom: 140, textAlign: "center" }}>
+          <div className="cgi-wrap">
+            <div className="cg-success" style={{ maxWidth: 520, margin: "0 auto" }}>
+              <div className="ic"><Check size={30} /></div>
+              <h3>You're in.</h3>
+              <p>
+                Thanks{data.full_name ? `, ${data.full_name.split(" ")[0]}` : ""} — your intake is locked in and headed
+                straight to Chris. He'll review everything and reach out with your next steps. Let's work.
+              </p>
+            </div>
+          </div>
+        </section>
+      ) : (
+        <>
+          <header className="cg-section" style={{ paddingBottom: 40 }}>
+            <div className="cgi-wrap" style={{ textAlign: "center" }}>
+              <div className="cg-kicker">Client Onboarding</div>
+              <h1 className="cg-h2" style={{ fontSize: "clamp(40px,8vw,84px)", marginBottom: 18 }}>
+                Nutrition <span style={{ color: "var(--red)" }}>Intake</span>
+              </h1>
+              <p className="cg-lead" style={{ margin: "0 auto" }}>
+                The more detail you give, the sharper your plan. Takes about 5 minutes — answer honestly, there are no
+                wrong answers.
+              </p>
+            </div>
+          </header>
+          <section style={{ paddingBottom: 110 }}>
+            <div className="cgi-wrap">
+              {status === "error" && <div className="cgi-err">{errMsg}</div>}
+              {INTAKE_SECTIONS.map((s) => (
+                <div key={s.id} className="cgi-card">
+                  <div className="cgi-head">
+                    <span className="cgi-num">{s.num}</span>
+                    <h2 className="cgi-title">{s.title}</h2>
+                  </div>
+                  {s.fields.map((f) => (
+                    <IntakeField key={f.name} field={f} value={data[f.name]} onChange={set} />
+                  ))}
+                </div>
+              ))}
+              <button className="cgi-submit" onClick={submit} disabled={status === "sending"}>
+                {status === "sending" ? "Sending…" : <>Submit Intake <ArrowRight size={18} /></>}
+              </button>
+              <p className="cgi-foot">Your information is kept private and used only to build your coaching plan.</p>
+            </div>
+          </section>
+        </>
+      )}
+    </>
+  );
+}
+
 /* ---------------- ROOT ---------------- */
 const PATHS = {
   home: "/",
@@ -1304,6 +1579,7 @@ const PATHS = {
   apparel: "/apparel",
   supplements: "/supplements",
   contact: "/contact",
+  intake: "/intake",
 };
 const TITLES = {
   home: "Chris George Fitness — Let's Work",
@@ -1311,6 +1587,7 @@ const TITLES = {
   apparel: "Apparel — Chris George Fitness",
   supplements: "Supplements — Chris George Fitness",
   contact: "Contact — Chris George Fitness",
+  intake: "Client Intake — Chris George Fitness",
 };
 const pageFromPath = (path) => {
   const p = path !== "/" ? path.replace(/\/+$/, "") : "/";
@@ -1360,6 +1637,7 @@ export default function App() {
       {page === "apparel" && <Apparel />}
       {page === "supplements" && <Supplements go={go} />}
       {page === "contact" && <Contact go={go} />}
+      {page === "intake" && <Intake />}
       <Footer go={go} />
     </div>
   );
