@@ -41,7 +41,7 @@ const LOGO_FULL = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAw
 const FORMSPREE_ENDPOINT = "https://formspree.io/f/xdavzknk";
 // Separate Formspree form for the post-purchase client intake questionnaire.
 // Create a 2nd form at formspree.io ("Client Nutrition Intake") and paste its hash here.
-const FORMSPREE_INTAKE_ENDPOINT = "https://formspree.io/f/REPLACE_ME";
+const FORMSPREE_INTAKE_ENDPOINT = "https://formspree.io/f/mjgdaovb";
 // Stripe Payment Link — clients land on /intake automatically after paying
 // (set the Payment Link's "After payment" redirect to /intake in the Stripe dashboard).
 const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/aFa00i3XK4u7eO11GP6EU00";
