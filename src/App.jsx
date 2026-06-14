@@ -700,11 +700,8 @@ function Home({ go }) {
                   results — no shortcuts.
                 </p>
                 <div className="cg-hero-cta">
-                  <button className="cg-btn cg-btn-primary" onClick={() => go("contact")}>
-                    Start Training <ArrowRight size={16} />
-                  </button>
-                  <button className="cg-btn cg-btn-ghost" onClick={() => go("services")}>
-                    View Services
+                  <button className="cg-btn cg-btn-primary" onClick={() => go("services")}>
+                    View Services <ArrowRight size={16} />
                   </button>
                 </div>
               </Reveal>
