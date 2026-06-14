@@ -831,17 +831,12 @@ function AccordionItem({ s, isOpen, onToggle, go }) {
                 {s.note}
               </div>
             )}
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-              <button
-                className="cg-btn cg-btn-primary"
-                onClick={() => window.open(STRIPE_PAYMENT_LINK, "_blank", "noopener")}
-              >
-                Make a Payment <ArrowUpRight size={15} />
-              </button>
-              <button className="cg-btn cg-btn-ghost" onClick={() => go("contact")}>
-                Get started <ArrowUpRight size={15} />
-              </button>
-            </div>
+            <button
+              className="cg-btn cg-btn-primary"
+              onClick={() => window.open(STRIPE_PAYMENT_LINK, "_blank", "noopener")}
+            >
+              Make a Payment <ArrowUpRight size={15} />
+            </button>
           </div>
         </div>
       </div>
