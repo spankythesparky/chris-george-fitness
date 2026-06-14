@@ -892,6 +892,21 @@ function Services({ go }) {
               </button>
             </div>
           </Reveal>
+
+          <Reveal>
+            <div className="cg-custom" style={{ marginTop: 16 }}>
+              <div>
+                <h3>Already know your plan?</h3>
+                <p>Send your payment securely online — enter the amount for the service you've arranged.</p>
+              </div>
+              <button
+                className="cg-btn cg-btn-ghost"
+                onClick={() => window.open(STRIPE_PAYMENT_LINK, "_blank", "noopener")}
+              >
+                Make a Payment <ArrowUpRight size={16} />
+              </button>
+            </div>
+          </Reveal>
         </div>
       </section>
 
@@ -1276,6 +1291,7 @@ function Footer({ go }) {
             <button onClick={() => go("apparel")}>Apparel</button>
             <button onClick={() => go("supplements")}>Supplements</button>
             <button onClick={() => go("contact")}>Contact</button>
+            <button onClick={() => window.open(STRIPE_PAYMENT_LINK, "_blank", "noopener")}>Make a Payment</button>
           </div>
         </div>
         <div className="cg-foot-bottom">
