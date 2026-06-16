@@ -477,6 +477,7 @@ const INPERSON = [
     price: "$300",
     unit: "/ month",
     note: "Packages start here",
+    payUrl: "https://buy.stripe.com/9B628qbqc0dR6hv99h6EU0b",
   },
   {
     icon: Dumbbell,
@@ -485,6 +486,7 @@ const INPERSON = [
     points: ["2 in-person sessions / week", "Full custom diet plan", "Monthly progress check-ins"],
     price: "$550",
     unit: "/ month",
+    payUrl: "https://buy.stripe.com/4gMaEWbqcgcP21f5X56EU0a",
   },
   {
     icon: Dumbbell,
@@ -493,6 +495,7 @@ const INPERSON = [
     points: ["3 in-person sessions / week", "Full custom diet plan", "Priority scheduling"],
     price: "$750",
     unit: "/ month",
+    payUrl: "https://buy.stripe.com/14A3cu2TG8Kn6hv4T16EU09",
   },
 ];
 
@@ -504,6 +507,7 @@ const ONLINE = [
     points: ["Custom macros & meal structure", "Monthly adjustments", "Accountability & check-ins"],
     price: "$175",
     unit: "/ month",
+    payUrl: "https://buy.stripe.com/fZu00igKw9OreO1dpx6EU05",
   },
   {
     icon: Laptop,
@@ -512,6 +516,7 @@ const ONLINE = [
     points: ["Full custom diet plan", "Custom training program", "Ongoing adjustments & support"],
     price: "$220",
     unit: "/ month",
+    payUrl: "https://buy.stripe.com/5kQbJ0eCo4u7fS585d6EU0d",
   },
 ];
 
@@ -524,6 +529,7 @@ const SINGLE = [
     price: "$65",
     unit: "/ hour",
     note: "Discount for multiple days a week",
+    payUrl: "https://buy.stripe.com/fZu6oG65S0dR7lzgBJ6EU08",
   },
   {
     icon: PersonStanding,
@@ -532,6 +538,7 @@ const SINGLE = [
     points: ["30-minute focused session", "Mandatory poses & transitions", "Stage presence coaching"],
     price: "$30",
     unit: "/ 30 min",
+    payUrl: "https://buy.stripe.com/3cIbJ01PCaSv8pDbhp6EU07",
   },
 ];
 
@@ -543,6 +550,7 @@ const COMP = {
   price: "$1,000",
   unit: "/ 12 weeks",
   note: "Starting price",
+  payUrl: "https://buy.stripe.com/6oU4gybqcgcP7lzgBJ6EU06",
 };
 
 const PACKAGES = [
@@ -830,7 +838,7 @@ function AccordionItem({ s, isOpen, onToggle, go }) {
             )}
             <button
               className="cg-btn cg-btn-primary"
-              onClick={() => window.open(STRIPE_PAYMENT_LINK, "_blank", "noopener")}
+              onClick={() => window.open(s.payUrl || STRIPE_PAYMENT_LINK, "_blank", "noopener")}
             >
               Make a Payment <ArrowUpRight size={15} />
             </button>
