@@ -876,6 +876,31 @@ function Services({ go }) {
           <Reveal delay={160}>
             <p className="cg-lead">Simple, honest pricing. Tap any plan to see what's included.</p>
           </Reveal>
+          <Reveal delay={220}>
+            <p
+              className="cg-lead"
+              style={{ fontSize: 15, color: "var(--muted)", marginTop: 14, maxWidth: 600 }}
+            >
+              Need a payment plan platform like{" "}
+              <strong style={{ color: "var(--text)" }}>Klarna</strong> or{" "}
+              <strong style={{ color: "var(--text)" }}>Affirm</strong>?{" "}
+              <button
+                onClick={() => go("contact")}
+                style={{
+                  color: "var(--red)",
+                  background: "none",
+                  border: "none",
+                  padding: 0,
+                  font: "inherit",
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                }}
+              >
+                Contact me
+              </button>{" "}
+              prior to purchase and we'll get it set up.
+            </p>
+          </Reveal>
         </div>
       </header>
 
