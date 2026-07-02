@@ -768,6 +768,80 @@ function Home({ go }) {
         </div>
       </section>
 
+      {/* MEET YOUR COACH */}
+      <section className="cg-section cgbio">
+        <style>{`
+          .cgbio{border-top:1px solid var(--line);}
+          .cgbio-grid{display:grid;grid-template-columns:0.85fr 1.15fr;gap:56px;align-items:start;}
+          .cgbio-photo{position:relative;}
+          .cgbio-photo img{width:100%;max-width:430px;border-radius:22px;display:block;
+            box-shadow:0 30px 90px rgba(0,0,0,0.55), 0 0 60px rgba(225,23,34,0.12);}
+          .cgbio-photo::after{content:"";position:absolute;inset:0;border-radius:22px;
+            border:1px solid rgba(225,23,34,0.25);pointer-events:none;max-width:430px;}
+          .cgbio-name{font-family:'Anton';font-weight:400;text-transform:uppercase;line-height:0.95;
+            font-size:clamp(34px,4.5vw,52px);letter-spacing:-0.5px;margin:14px 0 6px;}
+          .cgbio-title{font-family:'Archivo';font-weight:700;text-transform:uppercase;letter-spacing:1px;
+            font-size:14px;color:var(--red);margin-bottom:22px;}
+          .cgbio-badges{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:26px;}
+          .cgbio-body p{color:rgba(244,241,236,0.74);font-size:16px;line-height:1.72;margin:0 0 18px;}
+          .cgbio-quote{border-left:3px solid var(--red);padding:6px 0 6px 20px;margin:26px 0;
+            font-family:'Archivo';font-weight:800;font-style:italic;text-transform:uppercase;
+            letter-spacing:0.3px;font-size:clamp(19px,2.2vw,25px);line-height:1.25;color:var(--text);}
+          @media(max-width:900px){
+            .cgbio-grid{grid-template-columns:1fr;gap:32px;}
+            .cgbio-photo{display:flex;justify-content:center;}
+            .cgbio-photo img,.cgbio-photo::after{max-width:360px;}
+          }
+        `}</style>
+        <div className="cg-wrap">
+          <Reveal>
+            <div className="cg-kicker" style={{ marginBottom: 22 }}>Meet Your Coach</div>
+          </Reveal>
+          <div className="cgbio-grid">
+            <Reveal className="cgbio-photo">
+              <img src="/chris-bio.jpg" alt="Chris George — Elite Fitness Coach & Nutritionist" />
+            </Reveal>
+            <Reveal delay={120}>
+              <div>
+                <h2 className="cgbio-name">Chris George</h2>
+                <div className="cgbio-title">Elite Fitness Coach &amp; Nutritionist</div>
+                <div className="cgbio-badges">
+                  {["28+ Yrs Coaching", "16+ Yrs Nutritionist", "Westside Barbell Alumni", "Mountain Dog Trained", "Est. 1996"].map((b) => (
+                    <span key={b} className="cg-badge">{b}</span>
+                  ))}
+                </div>
+                <div className="cgbio-body">
+                  <p>
+                    With over 28 years of coaching experience and 16+ years as a certified nutritionist, I have dedicated
+                    my life to mastering the science and art of physical transformation. My coaching philosophy is forged
+                    by decades of elite, real-world experience, including three years training under the legendary Louie
+                    Simmons at Westside Barbell, followed by another three years training alongside bodybuilding
+                    mastermind John &ldquo;Mountain Dog&rdquo; Meadows.
+                  </p>
+                  <p>
+                    By blending the absolute best of Westside powerlifting intensity with Meadows&rsquo; world-class
+                    hypertrophy methodologies, I bridge the gap between maximum strength and elite aesthetics.
+                  </p>
+                  <div className="cgbio-quote">Movement quality dictates results.</div>
+                  <p>
+                    Whether I am preparing bodybuilding and powerlifting athletes to dominate the competitive stage or
+                    guiding lifestyle clients to get into the absolute best shape of their lives, my approach remains
+                    relentless on one core principle&mdash;impeccable form. I firmly believe that keeping my clients safe,
+                    healthy, and injury-free is my highest priority.
+                  </p>
+                  <p>
+                    I don&rsquo;t believe in cookie-cutter templates or hands-off training. I care deeply about every
+                    single individual I work with, tracking every detail of how you perform, move, and progress. Coaching
+                    isn&rsquo;t just a job for me&mdash;I genuinely love what I do every single day, and I am fully invested
+                    in helping you build a strong, resilient, and elite physique.
+                  </p>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
       <CTABand go={go} />
     </>
   );
