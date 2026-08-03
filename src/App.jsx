@@ -1309,6 +1309,7 @@ function Apparel() {
                 <li><Check size={17} /> 95% cotton / 5% spandex — soft, durable, stretch</li>
                 <li><Check size={17} /> Front CG monogram + full-back wolf graphic</li>
                 <li><Check size={17} /> Athletic fit</li>
+                <li><Check size={17} /> Please allow 5–7 business days</li>
               </ul>
               <div className="cgap-sizelabel" style={{ marginBottom: 20 }}>Size selected at checkout</div>
               {APPAREL_LIVE ? (
