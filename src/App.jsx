@@ -1302,11 +1302,11 @@ function Apparel() {
                 <span className="muted">+ shipping</span>
               </div>
               <p className="cgap-desc">
-                Premium heavyweight black tee. The CG monogram sits clean on the front chest; the CG Fitness wolf
-                commands the back. Built for the grind, made to wear it.
+                Premium black performance tee with a soft cotton-spandex stretch. The CG monogram sits clean on the
+                front chest; the CG Fitness wolf commands the back. Built for the grind, made to wear it.
               </p>
               <ul className="cgap-feats">
-                <li><Check size={17} /> Heavyweight cotton, built to last</li>
+                <li><Check size={17} /> 95% cotton / 5% spandex — soft, durable, stretch</li>
                 <li><Check size={17} /> Front CG monogram + full-back wolf graphic</li>
                 <li><Check size={17} /> Athletic fit</li>
               </ul>
