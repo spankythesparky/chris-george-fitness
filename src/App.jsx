@@ -1246,8 +1246,6 @@ function CTABand({ go }) {
 
 /* ---------------- APPAREL (coming soon) ---------------- */
 function Apparel() {
-  const [size, setSize] = useState("L");
-  const sizes = ["S", "M", "L", "XL", "2XL"];
   return (
     <section className="cg-section">
       <style>{`
@@ -1312,18 +1310,7 @@ function Apparel() {
                 <li><Check size={17} /> Front CG monogram + full-back wolf graphic</li>
                 <li><Check size={17} /> Athletic fit</li>
               </ul>
-              <div className="cgap-sizelabel">Size</div>
-              <div className="cgap-sizes">
-                {sizes.map((sz) => (
-                  <button
-                    key={sz}
-                    className={`cgap-size ${size === sz ? "on" : ""}`}
-                    onClick={() => setSize(sz)}
-                  >
-                    {sz}
-                  </button>
-                ))}
-              </div>
+              <div className="cgap-sizelabel" style={{ marginBottom: 20 }}>Size selected at checkout</div>
               {APPAREL_LIVE ? (
                 <button
                   className="cgap-buy live"
