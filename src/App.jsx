@@ -46,6 +46,13 @@ const FORMSPREE_INTAKE_ENDPOINT = "https://formspree.io/f/mjgdaovb";
 // (set the Payment Link's "After payment" redirect to /intake in the Stripe dashboard).
 const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/aFa00i3XK4u7eO11GP6EU00";
 
+// ===== APPAREL DROP =====
+// Flip APPAREL_LIVE to true when you're ready to open checkout, then push.
+const APPAREL_LIVE = false;
+const APPAREL_PAY_URL = "https://buy.stripe.com/bJe8wO3XK7Gj49nadl6EU0g";
+const APPAREL_PRICE = "$35"; // TODO: set to match the price on the Stripe link before going live
+
+
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@500;600;700;800;900&family=Manrope:wght@300;400;500;600;700&display=swap');
 
@@ -1239,47 +1246,124 @@ function CTABand({ go }) {
 
 /* ---------------- APPAREL (coming soon) ---------------- */
 function Apparel() {
+  const [size, setSize] = useState("L");
+  const sizes = ["S", "M", "L", "XL", "2XL"];
   return (
-    <section className="cg-section cg-soon">
-      <div className="cg-wrap cg-soon-in">
+    <section className="cg-section">
+      <style>{`
+        .cgap-grid{display:grid;grid-template-columns:1.05fr 0.95fr;gap:52px;align-items:center;}
+        .cgap-photo{background:var(--surface);border:1px solid var(--line);border-radius:22px;
+          padding:18px;box-shadow:0 30px 90px rgba(0,0,0,0.5);position:relative;}
+        .cgap-photo img{width:100%;border-radius:12px;display:block;}
+        .cgap-drop-tag{position:absolute;top:26px;left:26px;z-index:2;background:var(--red);color:#fff;
+          font-family:'Archivo';font-weight:800;text-transform:uppercase;letter-spacing:1px;font-size:12px;
+          padding:7px 13px;border-radius:999px;}
+        .cgap-name{font-family:'Anton';font-weight:400;text-transform:uppercase;line-height:0.95;
+          font-size:clamp(38px,5.5vw,62px);letter-spacing:-0.5px;margin:12px 0 10px;}
+        .cgap-price{font-family:'Archivo';font-weight:800;font-size:26px;color:var(--red);margin-bottom:20px;}
+        .cgap-price .muted{color:var(--muted);font-size:15px;font-weight:600;margin-left:8px;}
+        .cgap-desc{color:rgba(244,241,236,0.74);font-size:16px;line-height:1.7;margin-bottom:26px;max-width:460px;}
+        .cgap-feats{list-style:none;padding:0;margin:0 0 28px;display:flex;flex-direction:column;gap:10px;}
+        .cgap-feats li{display:flex;align-items:center;gap:10px;color:rgba(244,241,236,0.82);font-size:14.5px;}
+        .cgap-feats svg{color:var(--red);flex-shrink:0;}
+        .cgap-sizelabel{font-family:'Archivo';font-weight:700;text-transform:uppercase;letter-spacing:1px;
+          font-size:12px;color:var(--muted);margin-bottom:10px;}
+        .cgap-sizes{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:28px;}
+        .cgap-size{min-width:48px;padding:11px 0;text-align:center;border-radius:10px;border:1px solid var(--line);
+          background:var(--surface2);color:var(--muted);font-family:'Archivo';font-weight:700;font-size:14px;
+          cursor:pointer;transition:all .15s;}
+        .cgap-size:hover{border-color:rgba(225,23,34,0.5);}
+        .cgap-size.on{border-color:var(--red);background:var(--red-soft);color:var(--text);}
+        .cgap-buy{width:100%;max-width:420px;padding:18px 24px;border:none;border-radius:12px;
+          font-family:'Archivo';font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:1px;
+          display:flex;align-items:center;justify-content:center;gap:10px;transition:.2s;}
+        .cgap-buy.live{background:var(--red);color:#fff;cursor:pointer;}
+        .cgap-buy.live:hover{box-shadow:0 12px 30px rgba(225,23,34,0.3);transform:translateY(-2px);}
+        .cgap-buy.soon{background:var(--surface2);color:var(--muted);border:1px solid var(--line);cursor:not-allowed;}
+        .cgap-soonnote{color:var(--muted);font-size:13.5px;margin-top:14px;}
+        .cgap-follow{display:flex;align-items:center;gap:16px;margin-top:30px;padding-top:26px;border-top:1px solid var(--line);}
+        .cgap-follow span{font-family:'Archivo';font-weight:700;text-transform:uppercase;letter-spacing:1px;font-size:12px;color:var(--muted);}
+        @media(max-width:900px){.cgap-grid{grid-template-columns:1fr;gap:30px;}.cgap-photo{order:-1;}}
+      `}</style>
+      <div className="cg-wrap">
         <Reveal>
-          <div className="cg-kicker">Apparel</div>
+          <div className="cg-kicker" style={{ marginBottom: 26 }}>Apparel</div>
         </Reveal>
-        <Reveal delay={80}>
-          <h1 className="cg-soon-title">
-            COMING
-            <br />
-            <span style={{ color: "var(--red)" }}>SOON</span>
-          </h1>
-        </Reveal>
-        <Reveal delay={160}>
-          <p className="cg-lead" style={{ margin: "0 auto 40px" }}>
-            Chris George Fitness gear is in the works — built for the grind, made to wear it. Follow along to catch the
-            drop the moment it lands.
-          </p>
-        </Reveal>
-        <Reveal delay={240}>
-          <div className="cg-soon-follow">
-            <span>Follow for drops</span>
-            <div className="cg-socials">
-              {SOCIALS.map((soc) => {
-                const Ic = soc.icon;
-                return (
-                  <a
-                    key={soc.label}
-                    className="cg-soc"
-                    href={soc.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={soc.label}
-                  >
-                    <Ic size={20} />
-                  </a>
-                );
-              })}
+        <div className="cgap-grid">
+          <Reveal>
+            <div className="cgap-photo">
+              {!APPAREL_LIVE && <div className="cgap-drop-tag">Dropping Soon</div>}
+              <img src="/cg-tee.jpg" alt="CG Fitness Wolf Tee — front and back" />
             </div>
-          </div>
-        </Reveal>
+          </Reveal>
+          <Reveal delay={120}>
+            <div>
+              <h1 className="cgap-name">The Wolf Tee</h1>
+              <div className="cgap-price">
+                {APPAREL_PRICE}
+                <span className="muted">+ shipping</span>
+              </div>
+              <p className="cgap-desc">
+                Premium heavyweight black tee. The CG monogram sits clean on the front chest; the CG Fitness wolf
+                commands the back. Built for the grind, made to wear it.
+              </p>
+              <ul className="cgap-feats">
+                <li><Check size={17} /> Heavyweight cotton, built to last</li>
+                <li><Check size={17} /> Front CG monogram + full-back wolf graphic</li>
+                <li><Check size={17} /> Athletic fit</li>
+              </ul>
+              <div className="cgap-sizelabel">Size</div>
+              <div className="cgap-sizes">
+                {sizes.map((sz) => (
+                  <button
+                    key={sz}
+                    className={`cgap-size ${size === sz ? "on" : ""}`}
+                    onClick={() => setSize(sz)}
+                  >
+                    {sz}
+                  </button>
+                ))}
+              </div>
+              {APPAREL_LIVE ? (
+                <button
+                  className="cgap-buy live"
+                  onClick={() => window.open(APPAREL_PAY_URL, "_blank", "noopener")}
+                >
+                  Buy Now — {APPAREL_PRICE} <ArrowUpRight size={17} />
+                </button>
+              ) : (
+                <>
+                  <button className="cgap-buy soon" disabled>
+                    Dropping Soon
+                  </button>
+                  <div className="cgap-soonnote">
+                    Checkout opens soon — follow below to catch the drop the moment it lands.
+                  </div>
+                </>
+              )}
+              <div className="cgap-follow">
+                <span>Follow for the drop</span>
+                <div className="cg-socials">
+                  {SOCIALS.map((soc) => {
+                    const Ic = soc.icon;
+                    return (
+                      <a
+                        key={soc.label}
+                        className="cg-soc"
+                        href={soc.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={soc.label}
+                      >
+                        <Ic size={20} />
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        </div>
       </div>
     </section>
   );
