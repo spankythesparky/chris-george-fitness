@@ -49,6 +49,7 @@ const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/aFa00i3XK4u7eO11GP6EU00";
 // ===== APPAREL DROP =====
 // Flip APPAREL_LIVE to true when you're ready to open checkout, then push.
 const APPAREL_LIVE = true;
+const APPAREL_SOLD_OUT = true; // set to false to reopen checkout
 const APPAREL_PAY_URL = "https://buy.stripe.com/bJe8wO3XK7Gj49nadl6EU0g";
 const APPAREL_PRICE = "$35";
 
@@ -1290,7 +1291,11 @@ function Apparel() {
         <div className="cgap-grid">
           <Reveal>
             <div className="cgap-photo">
-              {!APPAREL_LIVE && <div className="cgap-drop-tag">Dropping Soon</div>}
+              {APPAREL_SOLD_OUT ? (
+                <div className="cgap-drop-tag" style={{ background: "#555" }}>Sold Out</div>
+              ) : (
+                !APPAREL_LIVE && <div className="cgap-drop-tag">Dropping Soon</div>
+              )}
               <img src="/cg-tee.jpg" alt="CG Fitness Wolf Tee — front and back" />
             </div>
           </Reveal>
@@ -1312,7 +1317,11 @@ function Apparel() {
                 <li><Check size={17} /> Please allow 5–7 business days</li>
               </ul>
               <div className="cgap-sizelabel" style={{ marginBottom: 20 }}>Size selected at checkout</div>
-              {APPAREL_LIVE ? (
+              {APPAREL_SOLD_OUT ? (
+                <button className="cgap-buy soon" disabled>
+                  Sold Out
+                </button>
+              ) : APPAREL_LIVE ? (
                 <button
                   className="cgap-buy live"
                   onClick={() => window.open(APPAREL_PAY_URL, "_blank", "noopener")}
