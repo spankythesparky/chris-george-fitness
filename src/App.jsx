@@ -1252,10 +1252,6 @@ function CTABand({ go }) {
 
 /* ---------------- APPAREL (coming soon) ---------------- */
 function Apparel() {
-  const [colorKey, setColorKey] = useState(
-    (APPAREL_COLORS.find((c) => !c.soldOut) || APPAREL_COLORS[0]).key
-  );
-  const color = APPAREL_COLORS.find((c) => c.key === colorKey) || APPAREL_COLORS[0];
   return (
     <section className="cg-section">
       <style>{`
@@ -1274,16 +1270,6 @@ function Apparel() {
         .cgap-feats{list-style:none;padding:0;margin:0 0 28px;display:flex;flex-direction:column;gap:10px;}
         .cgap-feats li{display:flex;align-items:center;gap:10px;color:rgba(244,241,236,0.82);font-size:14.5px;}
         .cgap-feats svg{color:var(--red);flex-shrink:0;}
-        .cgap-collabel{font-family:'Archivo';font-weight:700;text-transform:uppercase;letter-spacing:1px;
-          font-size:12px;color:var(--muted);margin-bottom:12px;}
-        .cgap-collabel b{color:var(--text);margin-left:6px;}
-        .cgap-swatches{display:flex;gap:12px;margin-bottom:24px;}
-        .cgap-swatch{width:40px;height:40px;border-radius:50%;cursor:pointer;position:relative;
-          border:2px solid var(--line);transition:all .15s;}
-        .cgap-swatch:hover{transform:scale(1.06);}
-        .cgap-swatch.on{border-color:var(--red);box-shadow:0 0 0 3px var(--red-soft);}
-        .cgap-swatch.sold::after{content:"";position:absolute;top:50%;left:-3px;right:-3px;height:2px;
-          background:#888;transform:rotate(-45deg);}
         .cgap-sizelabel{font-family:'Archivo';font-weight:700;text-transform:uppercase;letter-spacing:1px;
           font-size:12px;color:var(--muted);margin-bottom:10px;}
         .cgap-buy{width:100%;max-width:420px;padding:18px 24px;border:none;border-radius:12px;
@@ -1304,12 +1290,8 @@ function Apparel() {
         <div className="cgap-grid">
           <Reveal>
             <div className="cgap-photo">
-              {color.soldOut ? (
-                <div className="cgap-drop-tag" style={{ background: "#555" }}>Sold Out</div>
-              ) : (
-                !APPAREL_LIVE && <div className="cgap-drop-tag">Launching Soon</div>
-              )}
-              <img src={color.img} alt={`CG Fitness Wolf Tee — ${color.label} — front and back`} />
+              {!APPAREL_LIVE && <div className="cgap-drop-tag">Launching Soon</div>}
+              <img src="/cg-tees-all.jpg" alt="CG Fitness Wolf Tee — Black, Grey, Red — front and back" />
             </div>
           </Reveal>
           <Reveal delay={120}>
@@ -1324,25 +1306,13 @@ function Apparel() {
                 front chest; the CG Fitness wolf commands the back. Built for the grind, made to wear it.
               </p>
               <ul className="cgap-feats">
+                <li><Check size={17} /> Available in Black, Grey &amp; Red</li>
                 <li><Check size={17} /> 95% cotton / 5% spandex — soft, durable, stretch</li>
                 <li><Check size={17} /> Front CG monogram + full-back wolf graphic</li>
                 <li><Check size={17} /> Athletic fit</li>
                 <li><Check size={17} /> Please allow 5–7 business days</li>
               </ul>
-              <div className="cgap-collabel">Color:<b>{color.label}</b></div>
-              <div className="cgap-swatches">
-                {APPAREL_COLORS.map((c) => (
-                  <button
-                    key={c.key}
-                    className={`cgap-swatch ${c.key === colorKey ? "on" : ""} ${c.soldOut ? "sold" : ""}`}
-                    style={{ background: c.swatch }}
-                    onClick={() => setColorKey(c.key)}
-                    aria-label={c.label}
-                    title={c.soldOut ? `${c.label} — Sold Out` : c.label}
-                  />
-                ))}
-              </div>
-              <div className="cgap-sizelabel" style={{ marginBottom: 20 }}>Size selected at checkout</div>
+              <div className="cgap-sizelabel" style={{ marginBottom: 20 }}>Color &amp; size selected at checkout</div>
               {!APPAREL_LIVE ? (
                 <>
                   <button className="cgap-buy soon" disabled>Launching Soon</button>
@@ -1350,12 +1320,10 @@ function Apparel() {
                     Checkout opens soon — follow below to catch the drop the moment it lands.
                   </div>
                 </>
-              ) : color.soldOut ? (
-                <button className="cgap-buy soon" disabled>Sold Out — {color.label}</button>
               ) : (
                 <button
                   className="cgap-buy live"
-                  onClick={() => window.open(color.payUrl, "_blank", "noopener")}
+                  onClick={() => window.open(APPAREL_PAY_URL, "_blank", "noopener")}
                 >
                   Buy Now — {APPAREL_PRICE} <ArrowUpRight size={17} />
                 </button>
