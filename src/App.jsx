@@ -48,7 +48,7 @@ const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/aFa00i3XK4u7eO11GP6EU00";
 
 // ===== APPAREL DROP =====
 // Flip APPAREL_LIVE to true when you're ready to open checkout, then push.
-const APPAREL_LIVE = false;
+const APPAREL_LIVE = true;
 const APPAREL_PRICE = "$39.99";
 // One Stripe link handles all colors + sizes at checkout; swatches preview the photo.
 const APPAREL_PAY_URL = "https://buy.stripe.com/9B63cu51Of8L5dr85d6EU0h";
@@ -1252,6 +1252,8 @@ function CTABand({ go }) {
 
 /* ---------------- APPAREL (coming soon) ---------------- */
 function Apparel() {
+  const [colorKey, setColorKey] = useState(APPAREL_COLORS[0].key);
+  const color = APPAREL_COLORS.find((c) => c.key === colorKey) || APPAREL_COLORS[0];
   return (
     <section className="cg-section">
       <style>{`
@@ -1270,6 +1272,14 @@ function Apparel() {
         .cgap-feats{list-style:none;padding:0;margin:0 0 28px;display:flex;flex-direction:column;gap:10px;}
         .cgap-feats li{display:flex;align-items:center;gap:10px;color:rgba(244,241,236,0.82);font-size:14.5px;}
         .cgap-feats svg{color:var(--red);flex-shrink:0;}
+        .cgap-collabel{font-family:'Archivo';font-weight:700;text-transform:uppercase;letter-spacing:1px;
+          font-size:12px;color:var(--muted);margin-bottom:12px;}
+        .cgap-collabel b{color:var(--text);margin-left:6px;}
+        .cgap-swatches{display:flex;gap:12px;margin-bottom:24px;}
+        .cgap-swatch{width:40px;height:40px;border-radius:50%;cursor:pointer;position:relative;
+          border:2px solid var(--line);transition:all .15s;}
+        .cgap-swatch:hover{transform:scale(1.06);}
+        .cgap-swatch.on{border-color:var(--red);box-shadow:0 0 0 3px var(--red-soft);}
         .cgap-sizelabel{font-family:'Archivo';font-weight:700;text-transform:uppercase;letter-spacing:1px;
           font-size:12px;color:var(--muted);margin-bottom:10px;}
         .cgap-buy{width:100%;max-width:420px;padding:18px 24px;border:none;border-radius:12px;
@@ -1291,7 +1301,7 @@ function Apparel() {
           <Reveal>
             <div className="cgap-photo">
               {!APPAREL_LIVE && <div className="cgap-drop-tag">Launching Soon</div>}
-              <img src="/cg-tees-all.jpg" alt="CG Fitness Wolf Tee — Black, Grey, Red — front and back" />
+              <img src={color.img} alt={`CG Fitness Wolf Tee — ${color.label} — front and back`} />
             </div>
           </Reveal>
           <Reveal delay={120}>
@@ -1306,13 +1316,25 @@ function Apparel() {
                 front chest; the CG Fitness wolf commands the back. Built for the grind, made to wear it.
               </p>
               <ul className="cgap-feats">
-                <li><Check size={17} /> Available in Black, Grey &amp; Red</li>
                 <li><Check size={17} /> 95% cotton / 5% spandex — soft, durable, stretch</li>
                 <li><Check size={17} /> Front CG monogram + full-back wolf graphic</li>
                 <li><Check size={17} /> Athletic fit</li>
                 <li><Check size={17} /> Please allow 5–7 business days</li>
               </ul>
-              <div className="cgap-sizelabel" style={{ marginBottom: 20 }}>Color &amp; size selected at checkout</div>
+              <div className="cgap-collabel">Color:<b>{color.label}</b></div>
+              <div className="cgap-swatches">
+                {APPAREL_COLORS.map((c) => (
+                  <button
+                    key={c.key}
+                    className={`cgap-swatch ${c.key === colorKey ? "on" : ""}`}
+                    style={{ background: c.swatch }}
+                    onClick={() => setColorKey(c.key)}
+                    aria-label={c.label}
+                    title={c.label}
+                  />
+                ))}
+              </div>
+              <div className="cgap-sizelabel" style={{ marginBottom: 20 }}>Size selected at checkout</div>
               {!APPAREL_LIVE ? (
                 <>
                   <button className="cgap-buy soon" disabled>Launching Soon</button>
@@ -1323,7 +1345,7 @@ function Apparel() {
               ) : (
                 <button
                   className="cgap-buy live"
-                  onClick={() => window.open(APPAREL_PAY_URL, "_blank", "noopener")}
+                  onClick={() => window.open(color.payUrl, "_blank", "noopener")}
                 >
                   Buy Now — {APPAREL_PRICE} <ArrowUpRight size={17} />
                 </button>
