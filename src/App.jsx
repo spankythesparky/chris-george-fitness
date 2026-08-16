@@ -49,9 +49,14 @@ const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/aFa00i3XK4u7eO11GP6EU00";
 // ===== APPAREL DROP =====
 // Flip APPAREL_LIVE to true when you're ready to open checkout, then push.
 const APPAREL_LIVE = true;
-const APPAREL_SOLD_OUT = true; // set to false to reopen checkout
-const APPAREL_PAY_URL = "https://buy.stripe.com/bJe8wO3XK7Gj49nadl6EU0g";
 const APPAREL_PRICE = "$35";
+// One Stripe link handles all colors + sizes at checkout; swatches preview the photo.
+const APPAREL_PAY_URL = "https://buy.stripe.com/9B63cu51Of8L5dr85d6EU0h";
+const APPAREL_COLORS = [
+  { key: "black", label: "Black", swatch: "#141414", img: "/cg-tee.jpg", payUrl: APPAREL_PAY_URL, soldOut: false },
+  { key: "grey", label: "Grey", swatch: "#8a8a8a", img: "/cg-tee-grey.jpg", payUrl: APPAREL_PAY_URL, soldOut: false },
+  { key: "red", label: "Red", swatch: "#a52633", img: "/cg-tee-red.jpg", payUrl: APPAREL_PAY_URL, soldOut: false },
+];
 
 
 const CSS = `
@@ -1247,6 +1252,10 @@ function CTABand({ go }) {
 
 /* ---------------- APPAREL (coming soon) ---------------- */
 function Apparel() {
+  const [colorKey, setColorKey] = useState(
+    (APPAREL_COLORS.find((c) => !c.soldOut) || APPAREL_COLORS[0]).key
+  );
+  const color = APPAREL_COLORS.find((c) => c.key === colorKey) || APPAREL_COLORS[0];
   return (
     <section className="cg-section">
       <style>{`
@@ -1265,14 +1274,18 @@ function Apparel() {
         .cgap-feats{list-style:none;padding:0;margin:0 0 28px;display:flex;flex-direction:column;gap:10px;}
         .cgap-feats li{display:flex;align-items:center;gap:10px;color:rgba(244,241,236,0.82);font-size:14.5px;}
         .cgap-feats svg{color:var(--red);flex-shrink:0;}
+        .cgap-collabel{font-family:'Archivo';font-weight:700;text-transform:uppercase;letter-spacing:1px;
+          font-size:12px;color:var(--muted);margin-bottom:12px;}
+        .cgap-collabel b{color:var(--text);margin-left:6px;}
+        .cgap-swatches{display:flex;gap:12px;margin-bottom:24px;}
+        .cgap-swatch{width:40px;height:40px;border-radius:50%;cursor:pointer;position:relative;
+          border:2px solid var(--line);transition:all .15s;}
+        .cgap-swatch:hover{transform:scale(1.06);}
+        .cgap-swatch.on{border-color:var(--red);box-shadow:0 0 0 3px var(--red-soft);}
+        .cgap-swatch.sold::after{content:"";position:absolute;top:50%;left:-3px;right:-3px;height:2px;
+          background:#888;transform:rotate(-45deg);}
         .cgap-sizelabel{font-family:'Archivo';font-weight:700;text-transform:uppercase;letter-spacing:1px;
           font-size:12px;color:var(--muted);margin-bottom:10px;}
-        .cgap-sizes{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:28px;}
-        .cgap-size{min-width:48px;padding:11px 0;text-align:center;border-radius:10px;border:1px solid var(--line);
-          background:var(--surface2);color:var(--muted);font-family:'Archivo';font-weight:700;font-size:14px;
-          cursor:pointer;transition:all .15s;}
-        .cgap-size:hover{border-color:rgba(225,23,34,0.5);}
-        .cgap-size.on{border-color:var(--red);background:var(--red-soft);color:var(--text);}
         .cgap-buy{width:100%;max-width:420px;padding:18px 24px;border:none;border-radius:12px;
           font-family:'Archivo';font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:1px;
           display:flex;align-items:center;justify-content:center;gap:10px;transition:.2s;}
@@ -1291,12 +1304,12 @@ function Apparel() {
         <div className="cgap-grid">
           <Reveal>
             <div className="cgap-photo">
-              {APPAREL_SOLD_OUT ? (
+              {color.soldOut ? (
                 <div className="cgap-drop-tag" style={{ background: "#555" }}>Sold Out</div>
               ) : (
                 !APPAREL_LIVE && <div className="cgap-drop-tag">Dropping Soon</div>
               )}
-              <img src="/cg-tee.jpg" alt="CG Fitness Wolf Tee — front and back" />
+              <img src={color.img} alt={`CG Fitness Wolf Tee — ${color.label} — front and back`} />
             </div>
           </Reveal>
           <Reveal delay={120}>
@@ -1307,7 +1320,7 @@ function Apparel() {
                 <span className="muted">+ shipping</span>
               </div>
               <p className="cgap-desc">
-                Premium black performance tee with a soft cotton-spandex stretch. The CG monogram sits clean on the
+                Premium performance tee with a soft cotton-spandex stretch. The CG monogram sits clean on the
                 front chest; the CG Fitness wolf commands the back. Built for the grind, made to wear it.
               </p>
               <ul className="cgap-feats">
@@ -1316,27 +1329,36 @@ function Apparel() {
                 <li><Check size={17} /> Athletic fit</li>
                 <li><Check size={17} /> Please allow 5–7 business days</li>
               </ul>
+              <div className="cgap-collabel">Color:<b>{color.label}</b></div>
+              <div className="cgap-swatches">
+                {APPAREL_COLORS.map((c) => (
+                  <button
+                    key={c.key}
+                    className={`cgap-swatch ${c.key === colorKey ? "on" : ""} ${c.soldOut ? "sold" : ""}`}
+                    style={{ background: c.swatch }}
+                    onClick={() => setColorKey(c.key)}
+                    aria-label={c.label}
+                    title={c.soldOut ? `${c.label} — Sold Out` : c.label}
+                  />
+                ))}
+              </div>
               <div className="cgap-sizelabel" style={{ marginBottom: 20 }}>Size selected at checkout</div>
-              {APPAREL_SOLD_OUT ? (
-                <button className="cgap-buy soon" disabled>
-                  Sold Out
-                </button>
-              ) : APPAREL_LIVE ? (
-                <button
-                  className="cgap-buy live"
-                  onClick={() => window.open(APPAREL_PAY_URL, "_blank", "noopener")}
-                >
-                  Buy Now — {APPAREL_PRICE} <ArrowUpRight size={17} />
-                </button>
-              ) : (
+              {!APPAREL_LIVE ? (
                 <>
-                  <button className="cgap-buy soon" disabled>
-                    Dropping Soon
-                  </button>
+                  <button className="cgap-buy soon" disabled>Dropping Soon</button>
                   <div className="cgap-soonnote">
                     Checkout opens soon — follow below to catch the drop the moment it lands.
                   </div>
                 </>
+              ) : color.soldOut ? (
+                <button className="cgap-buy soon" disabled>Sold Out — {color.label}</button>
+              ) : (
+                <button
+                  className="cgap-buy live"
+                  onClick={() => window.open(color.payUrl, "_blank", "noopener")}
+                >
+                  Buy Now — {APPAREL_PRICE} <ArrowUpRight size={17} />
+                </button>
               )}
               <div className="cgap-follow">
                 <span>Follow for the drop</span>
