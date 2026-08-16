@@ -48,7 +48,7 @@ const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/aFa00i3XK4u7eO11GP6EU00";
 
 // ===== APPAREL DROP =====
 // Flip APPAREL_LIVE to true when you're ready to open checkout, then push.
-const APPAREL_LIVE = true;
+const APPAREL_LIVE = false;
 const APPAREL_PRICE = "$39.99";
 // One Stripe link handles all colors + sizes at checkout; swatches preview the photo.
 const APPAREL_PAY_URL = "https://buy.stripe.com/9B63cu51Of8L5dr85d6EU0h";
@@ -1307,7 +1307,7 @@ function Apparel() {
               {color.soldOut ? (
                 <div className="cgap-drop-tag" style={{ background: "#555" }}>Sold Out</div>
               ) : (
-                !APPAREL_LIVE && <div className="cgap-drop-tag">Dropping Soon</div>
+                !APPAREL_LIVE && <div className="cgap-drop-tag">Launching Soon</div>
               )}
               <img src={color.img} alt={`CG Fitness Wolf Tee — ${color.label} — front and back`} />
             </div>
@@ -1345,7 +1345,7 @@ function Apparel() {
               <div className="cgap-sizelabel" style={{ marginBottom: 20 }}>Size selected at checkout</div>
               {!APPAREL_LIVE ? (
                 <>
-                  <button className="cgap-buy soon" disabled>Dropping Soon</button>
+                  <button className="cgap-buy soon" disabled>Launching Soon</button>
                   <div className="cgap-soonnote">
                     Checkout opens soon — follow below to catch the drop the moment it lands.
                   </div>
