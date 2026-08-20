@@ -49,7 +49,7 @@ const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/aFa00i3XK4u7eO11GP6EU00";
 // ===== APPAREL DROP =====
 // Flip APPAREL_LIVE to true when you're ready to open checkout, then push.
 const APPAREL_LIVE = true;
-const APPAREL_PRICE = "$39.99";
+const APPAREL_PRICE = "$42.99";
 // One Stripe link handles all colors + sizes at checkout; swatches preview the photo.
 const APPAREL_PAY_URL = "https://buy.stripe.com/9B63cu51Of8L5dr85d6EU0h";
 const APPAREL_COLORS = [
