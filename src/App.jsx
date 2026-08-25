@@ -529,7 +529,7 @@ const ONLINE = [
     points: ["Full custom diet plan", "Custom training program", "Ongoing adjustments & support"],
     price: "$220",
     unit: "/ month",
-    payUrl: "https://buy.stripe.com/5kQbJ0eCo4u7fS585d6EU0d",
+    payUrl: "https://buy.stripe.com/6oUfZg3XK2lZ49n85d6EU02",
   },
 ];
 
